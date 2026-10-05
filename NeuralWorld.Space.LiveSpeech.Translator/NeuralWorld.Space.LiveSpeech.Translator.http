@@ -1,0 +1,6 @@
+@NeuralWorld.Space.LiveSpeech.Translator_HostAddress = http://localhost:5227
+
+GET {{NeuralWorld.Space.LiveSpeech.Translator_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

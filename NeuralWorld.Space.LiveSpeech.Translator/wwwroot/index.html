@@ -1,0 +1,808 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary SEO Metadata -->
+    <title>LIVE SPEECH TRANSLATOR – Private Real-Time AI Translation | NeuralWorld</title>
+    <meta name="description" content="Private, real-time AI translation — running locally on your device. NeuralWorld Live Speech Translator uses client-side neural networks for secure, offline communication.">
+    <meta name="keywords" content="Live speech translator, real-time voice translation, on-device AI translator, private speech translator, offline AI translation, NeuralWorld">
+    <meta name="author" content="Niraj Soni">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <link rel="canonical" href="https://neuralworld.space/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://neuralworld.space/">
+    <meta property="og:title" content="LIVE SPEECH TRANSLATOR – Private Real-Time AI Translation">
+    <meta property="og:description" content="Private, real-time AI translation — running locally on your device. Zero data leaves your browser.">
+    <meta property="og:image" content="https://neuralworld.space/og-image.png">
+    <meta property="og:site_name" content="NeuralWorld">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://neuralworld.space/">
+    <meta name="twitter:title" content="LIVE SPEECH TRANSLATOR – Private Real-Time AI Translation">
+    <meta name="twitter:description" content="Private, real-time AI translation — running locally on your device. Zero data leaves your browser.">
+    <meta name="twitter:image" content="https://neuralworld.space/og-image.png">
+
+    <!-- Browser & PWA Support -->
+    <meta name="theme-color" content="#0a0c16">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2300f2fe'/></svg>">
+
+    <!-- Preconnect / DNS-Prefetch for External CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "NeuralWorld LIVE SPEECH TRANSLATOR",
+          "url": "https://neuralworld.space/",
+          "description": "Private, real-time AI translation — running locally on your device.",
+          "applicationCategory": "CommunicationApplication",
+          "operatingSystem": "Any browser supporting Web Speech API and WebAssembly",
+          "browserRequirements": "Requires JavaScript and WebAssembly support",
+          "author": {
+            "@type": "Person",
+            "name": "Niraj Soni"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+    </script>
+
+    <!-- APK Banner Styles -->
+    <style>
+        .apk-banner {
+            display: none; /* Hidden by default on mobile */
+            background: linear-gradient(90deg, #6b21a8, #00f2fe);
+            color: #fff;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 0 20px 20px 20px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+            .apk-banner a {
+                color: #fff;
+                font-weight: bold;
+                margin-left: 10px;
+                text-decoration: underline;
+            }
+
+        /* Always show on desktop (screens wider than 768px) */
+        @media (min-width: 768px) {
+            .apk-banner {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+</head>
+<body>
+
+    <aside class="marquee-container" aria-label="Beta notification">
+        <div class="marquee-text"><b>neuralWorld.space</b> just released Live Speech translator it is in beta testing...</div>
+    </aside>
+
+    <div class="ambient-glow glow-1" aria-hidden="true"></div>
+    <div class="ambient-glow glow-2" aria-hidden="true"></div>
+
+    <aside class="server-monitor-left" aria-label="Diagnostics and telemetry">
+        <section class="feed-panel">
+            <div class="feed-header">
+                <span>Speech NPU →<span style="font-size: 0.8rem; opacity: 0.8; font-weight: 500;">(Device STT)</span></span>
+                <span class="status-dot connected" aria-label="STT connected"></span>
+            </div>
+            <div class="feed-logs" id="sttLogs" role="log" aria-live="polite">
+                <div class="log-entry info">Engine Ready...</div>
+            </div>
+        </section>
+
+        <section class="feed-panel">
+            <div class="feed-header">
+                <span>Transformers.js →<span style="font-size: 0.8rem; opacity: 0.8; font-weight: 500;">(Cached ONNX / Quantized)</span></span>
+                <span class="status-dot" id="tfjsDot" aria-label="Model load status"></span>
+            </div>
+            <div class="feed-logs" id="transformersLogs" role="log" aria-live="polite">
+                <div class="log-entry info">Browser cache enabled. AI model will download only on first use.</div>
+            </div>
+        </section>
+    </aside>
+
+    <main class="app-container">
+        <header>
+            <div class="brand-wrap">
+                <h1 class="brand">
+                    <span class="brand-icon" aria-hidden="true"></span>
+                    LIVE SPEECH TRANSLATOR
+                </h1>
+                <span class="brand-subtitle">Private, real-time AI translation — running locally on your device.</span>
+            </div>
+
+            <div class="system-controls">
+                <button id="clearButton" class="btn-pill" type="button" aria-label="Clear chat messages">
+                    <span>Clear Chat</span>
+                </button>
+            </div>
+        </header>
+        <!-- NEW: APK Download Banner -->
+        <div id="apkDownloadBanner" class="apk-banner">
+            Want the native Android experience? <a href="apk/LiveSpeechTranslator.apk" download>Download our APK</a>
+        </div>
+        <!-- END NEW -->
+        <section class="language-bar" aria-label="Language selection">
+            <div class="lang-select-wrapper">
+                <label for="sourceLang">Source</label>
+                <select id="sourceLang" aria-label="Source Language">
+                    <option value="hi" selected>Hindi</option>
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="ja">Japanese</option>
+                    <option value="zh">Chinese</option>
+                </select>
+            </div>
+
+            <span class="swap-icon" aria-hidden="true">➔</span>
+
+            <div class="lang-select-wrapper">
+                <label for="targetLang">Target</label>
+                <select id="targetLang" aria-label="Target Language">
+                    <option value="es" selected>Spanish</option>
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="ja">Japanese</option>
+                    <option value="zh">Chinese</option>
+                </select>
+            </div>
+        </section>
+
+        <section id="chatContainer" class="chat-container" aria-label="Conversation Feed" role="log" aria-live="polite">
+            <div id="emptyMessage" class="empty-state">
+                Hold the microphone orb to speak and release to translate...
+                <div style="font-size: 0.7rem; text-shadow: 2px 2px 4px #b75ee5;">
+                    <p>
+                        <b>Important Note:</b><br>
+                        <span>The AI model will get downloaded on your device only on first use. Giving you full privacy.<br>You can also disconnect internet once AI model loaded in your device and translate.</span>
+                        <span><br /> Thanks - Team <b>neuralworld.space</b></span>
+
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="bottom-voice-bar" role="region" aria-label="Voice Controls">
+        <div class="voice-status-info">
+            <div id="voiceTitle" class="voice-status-title">Loading Models...</div>
+            <div id="voiceSub" class="voice-status-sub">Please wait</div>
+        </div>
+
+        <div id="waveform" class="waveform" aria-hidden="true">
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+        </div>
+
+        <button id="micOrb" class="mic-orb muted" type="button" aria-label="Push to talk button">
+            <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02 3.28l-1.5 1.5C12.95 15.93 12.49 16 12 16c-2.21 0-4-1.79-4-4H6.3c0 2.89 2.11 5.3 4.85 5.82V21h1.7v-3.18c.84-.16 1.62-.5 2.29-.97zM2.1 4.1L.69 5.51l2.43 2.43C3.04 8.79 3 9.38 3 10v1c0 2.76 2.24 5 5 5h3.09l4.4 4.4 1.41-1.41L2.1 4.1zM12 5c1.66 0 3 1.34 3 3v2.17l-6 6V8c0-1.66 1.34-3 3-3z" />
+            </svg>
+        </button>
+    </div>
+
+    <div id="aiRobot" class="robot-container" aria-hidden="true">
+        <div class="robot-head">
+            <div class="robot-ear left"></div>
+            <div class="robot-ear right"></div>
+            <div class="robot-face">
+                <div class="robot-eyes">
+                    <div class="robot-eye"></div>
+                    <div class="robot-eye"></div>
+                </div>
+                <div class="robot-mouth"></div>
+            </div>
+        </div>
+        <div class="robot-body">
+            <div class="robot-core"></div>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        <div class="footer-left">Powered By: Xenova/Opus AI model.</div>
+        <div class="footer-right">Made with <span style="color: #ef4444;" aria-label="love">&hearts;</span> by Niraj Soni</div>
+    </footer>
+
+    <noscript>
+        <div style="position:fixed;bottom:60px;left:0;right:0;background:#111;color:#fff;padding:12px;text-align:center;z-index:9999;">
+            JavaScript is required to run real-time in-browser speech translation. Enable JavaScript to use NeuralWorld LIVE SPEECH TRANSLATOR.
+        </div>
+    </noscript>
+
+    <script>
+        const sourceLangSelect = document.getElementById("sourceLang");
+        const targetLangSelect = document.getElementById("targetLang");
+        const chatContainer = document.getElementById("chatContainer");
+        const emptyMessage = document.getElementById("emptyMessage");
+
+        const voiceTitle = document.getElementById("voiceTitle");
+        const voiceSub = document.getElementById("voiceSub");
+        const waveform = document.getElementById("waveform");
+        const micOrb = document.getElementById("micOrb");
+        const tfjsDot = document.getElementById("tfjsDot");
+
+        let activeCard = null;
+        let isModelLoaded = false;
+        let isHolding = false;
+
+        function appendLog(elementId, text, type = 'normal') {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            const logEntry = document.createElement("div");
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `> ${text}`;
+            container.appendChild(logEntry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        const opusMap = {
+            "hi": "hi",
+            "en": "en",
+            "es": "es",
+            "ja": "ja",
+            "zh": "zh"
+        };
+
+        // -------------------------------------------------------------------
+        // TRANSFORMERS.JS WEB WORKER LOGIC
+        // -------------------------------------------------------------------
+        const workerCode = `
+    import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+
+    env.allowLocalModels = false;
+    env.allowRemoteModels = true;
+    env.useBrowserCache = true;
+
+    const models = {};
+    const modelPromises = {};
+
+    const modelMap = {
+        "hi-en": "Xenova/opus-mt-hi-en",
+        "en-hi": "Xenova/opus-mt-en-hi",
+        "es-en": "Xenova/opus-mt-es-en",
+        "en-es": "Xenova/opus-mt-en-es",
+        "ja-en": "Xenova/opus-mt-ja-en",
+        "en-ja": "Xenova/opus-mt-en-jap",
+        "zh-en": "Xenova/opus-mt-zh-en",
+        "en-zh": "Xenova/opus-mt-en-zh"
+    };
+
+    async function loadModel(modelId, index, total) {
+        if (!modelId) {
+            throw new Error("No translation model is configured for this language pair.");
+        }
+
+        if (models[modelId]) {
+            return models[modelId];
+        }
+
+        if (modelPromises[modelId]) {
+            return modelPromises[modelId];
+        }
+
+        self.postMessage({
+            status: 'start_model',
+            modelId,
+            index,
+            total
+        });
+
+        modelPromises[modelId] = pipeline(
+            'translation',
+            modelId,
+            {
+                quantized: true,
+                progress_callback: (data) => {
+                    self.postMessage({
+                        status: 'progress',
+                        modelId,
+                        data
+                    });
+                }
+            }
+        );
+
+        try {
+            const translator = await modelPromises[modelId];
+            models[modelId] = translator;
+
+            self.postMessage({
+                status: 'model_ready',
+                modelId
+            });
+
+            return translator;
+        } catch (error) {
+            delete modelPromises[modelId];
+            throw error;
+        }
+    }
+
+    async function loadRequiredModels(src_lang, tgt_lang) {
+        if (src_lang === tgt_lang) {
+            return;
+        }
+
+        if (src_lang !== 'en' && tgt_lang !== 'en') {
+            const m1 = modelMap[\`\${src_lang}-en\`];
+            const m2 = modelMap[\`en-\${tgt_lang}\`];
+
+            await loadModel(m1, 1, 2);
+            await loadModel(m2, 2, 2);
+        } else {
+            const modelId = modelMap[\`\${src_lang}-\${tgt_lang}\`];
+            await loadModel(modelId, 1, 1);
+        }
+    }
+
+    self.onmessage = async (event) => {
+        const { action, text, src_lang, tgt_lang } = event.data;
+
+        if (action === 'load') {
+            try {
+                self.postMessage({
+                    status: 'cache_info',
+                    message: 'Browser model cache is enabled. Existing cached files will be reused.'
+                });
+
+                await loadRequiredModels(src_lang, tgt_lang);
+
+                self.postMessage({
+                    status: 'all_ready'
+                });
+            } catch (e) {
+                self.postMessage({
+                    status: 'error',
+                    error: e?.message || String(e)
+                });
+            }
+            return;
+        }
+
+        if (action === 'translate') {
+            try {
+                let resultText = text;
+
+                if (src_lang === tgt_lang) {
+                    self.postMessage({
+                        status: 'translated',
+                        result: text
+                    });
+                    return;
+                }
+
+                if (src_lang !== 'en' && tgt_lang !== 'en') {
+                    const model1Id = modelMap[\`\${src_lang}-en\`];
+                    const translator1 = await loadModel(model1Id, 1, 2);
+                    const res1 = await translator1(resultText);
+                    resultText = res1[0].translation_text;
+
+                    const model2Id = modelMap[\`en-\${tgt_lang}\`];
+                    const translator2 = await loadModel(model2Id, 2, 2);
+                    const res2 = await translator2(resultText);
+                    resultText = res2[0].translation_text;
+                } else {
+                    const modelId = modelMap[\`\${src_lang}-\${tgt_lang}\`];
+                    const translator = await loadModel(modelId, 1, 1);
+                    const res = await translator(resultText);
+                    resultText = res[0].translation_text;
+                }
+
+                self.postMessage({
+                    status: 'translated',
+                    result: resultText
+                });
+            } catch (e) {
+                self.postMessage({
+                    status: 'error',
+                    error: e?.message || "Translation failed."
+                });
+            }
+        }
+    };
+`;
+
+        const blob = new Blob([workerCode], { type: 'application/javascript' });
+        const tfWorker = new Worker(URL.createObjectURL(blob), { type: 'module' });
+
+        let lastProgress = {};
+        let currentLoadIndex = 1;
+        let currentLoadTotal = 1;
+        let modelLoadStartedAt = 0;
+
+        tfWorker.onmessage = (event) => {
+            const { status, modelId, index, total, data, result, error, message } = event.data;
+
+            if (status === 'cache_info') {
+                appendLog("transformersLogs", message || "Browser cache enabled.", "info");
+            } else if (status === 'start_model') {
+                currentLoadIndex = index;
+                currentLoadTotal = total;
+                modelLoadStartedAt = performance.now();
+
+                voiceTitle.textContent = `Loading AI (${index}/${total})...`;
+                appendLog("transformersLogs", `Preparing ${modelId}...`, "info");
+                appendLog("transformersLogs", "If this model was downloaded before, cached files will be reused.", "info");
+            } else if (status === 'progress') {
+                if (!data) return;
+
+                if (data.status === 'progress') {
+                    const progress = Number.isFinite(data.progress) ? Math.round(data.progress) : 0;
+
+                    if (data.file && (data.file.endsWith('.onnx') || data.file.endsWith('.bin'))) {
+                        voiceSub.textContent = `Loading model: ${progress}%`;
+                    }
+
+                    const prog = Math.floor(progress / 25) * 25;
+                    const key = `${modelId}:${data.file}`;
+
+                    if (prog > 0 && lastProgress[key] !== prog) {
+                        lastProgress[key] = prog;
+                        appendLog("transformersLogs", `Loading ${data.file}: ${prog}%`, "info");
+                    }
+                } else if (data.status === 'ready' || data.status === 'done') {
+                    appendLog("transformersLogs", `Loaded ${data.file || modelId}.`, "info");
+                }
+            } else if (status === 'model_ready') {
+                const elapsed = modelLoadStartedAt > 0
+                    ? ((performance.now() - modelLoadStartedAt) / 1000).toFixed(2)
+                    : "0.00";
+
+                appendLog("transformersLogs", `Model ready: ${modelId} (${elapsed}s).`, "info");
+            } else if (status === 'all_ready') {
+                isModelLoaded = true;
+                tfjsDot.classList.add("active");
+                voiceTitle.textContent = "Microphone Muted";
+                voiceSub.textContent = "Hold the orb to speak";
+
+                appendLog("transformersLogs", "Required AI models are ready.", "info");
+                appendLog("transformersLogs", "Browser cache is enabled — refreshes should reuse downloaded model files.", "info");
+            } else if (status === 'translated') {
+                handleTranslationResult(result);
+            } else if (status === 'error') {
+                isModelLoaded = false;
+                tfjsDot.classList.remove("active");
+                appendLog("transformersLogs", `Error: ${error}`, "error");
+                voiceTitle.textContent = "Model Error";
+                voiceSub.textContent = "Check the AI model logs";
+            }
+        };
+
+        function triggerModelLoad() {
+            isModelLoaded = false;
+            tfjsDot.classList.remove("active");
+            lastProgress = {};
+
+            voiceTitle.textContent = "Loading Models...";
+            voiceSub.textContent = "First visit downloads once; later visits use the browser cache.";
+
+            appendLog("transformersLogs", `Requested: ${sourceLangSelect.value} → ${targetLangSelect.value}`, "info");
+
+            tfWorker.postMessage({
+                action: 'load',
+                src_lang: opusMap[sourceLangSelect.value],
+                tgt_lang: opusMap[targetLangSelect.value]
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', triggerModelLoad);
+
+        // -------------------------------------------------------------------
+        // TRANSLATION UI HANDLERS
+        // -------------------------------------------------------------------
+        function handleTranscriptionResult(transcript) {
+            appendLog("sttLogs", `Speech Detected: "${transcript}"`, "info");
+            if (emptyMessage) emptyMessage.style.display = "none";
+
+            activeCard = document.createElement("div");
+            activeCard.className = "chat-card";
+            activeCard.dataset.startTime = performance.now();
+
+            const meta = document.createElement("div");
+            meta.className = "meta-tag";
+            meta.innerHTML = `<span>●</span> ${sourceLangSelect.options[sourceLangSelect.selectedIndex].text}`;
+
+            const transcriptElem = document.createElement("div");
+            transcriptElem.className = "transcript-bubble";
+            transcriptElem.textContent = transcript;
+
+            const targetMeta = document.createElement("div");
+            targetMeta.className = "meta-tag";
+            targetMeta.style.color = "#d8b4fe";
+            targetMeta.style.marginTop = "8px";
+            targetMeta.style.paddingTop = "8px";
+            targetMeta.style.borderTop = "1px solid rgba(255, 255, 255, 0.06)";
+            targetMeta.innerHTML = `<span>●</span> ${targetLangSelect.options[targetLangSelect.selectedIndex].text}`;
+
+            const translationElem = document.createElement("div");
+            translationElem.className = "translation-bubble";
+            translationElem.style.borderTop = "none";
+            translationElem.style.paddingTop = "4px";
+            translationElem.innerHTML = `
+        <div class="translating-wrapper">
+            <div class="glowing-orb">
+                <div class="pulse-ring"></div>
+                <div class="core"></div>
+            </div>
+            <span class="translating-text">Translating</span>
+        </div>
+    `;
+
+            activeCard.appendChild(meta);
+            activeCard.appendChild(transcriptElem);
+            activeCard.appendChild(targetMeta);
+            activeCard.appendChild(translationElem);
+
+            chatContainer.appendChild(activeCard);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            appendLog("transformersLogs", "Executing local client-side translation...", "info");
+
+            tfWorker.postMessage({
+                action: 'translate',
+                text: transcript,
+                src_lang: opusMap[sourceLangSelect.value],
+                tgt_lang: opusMap[targetLangSelect.value]
+            });
+        }
+
+        function handleTranslationResult(translation) {
+            if (!activeCard || activeCard.dataset.completed === "true") return;
+            activeCard.dataset.completed = "true";
+
+            const translationEndTime = performance.now();
+            const startTime = parseFloat(activeCard.dataset.startTime);
+            const translationLatency = !isNaN(startTime)
+                ? ((translationEndTime - startTime) / 1000).toFixed(2)
+                : "0.00";
+
+            appendLog("transformersLogs", `Output: "${translation}"`, "info");
+            appendLog("transformersLogs", `Translation completed in ${translationLatency}s.`, "info");
+            appendLog("ttsLogs", `Synthesizing audio...`, "info");
+
+            const translationElem = activeCard.querySelector(".translation-bubble");
+            if (translationElem) {
+                translationElem.style.opacity = '0';
+                translationElem.textContent = translation;
+
+                setTimeout(() => {
+                    translationElem.style.opacity = '1';
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }, 50);
+            }
+
+            speakText(translation, targetLangSelect.value);
+        }
+
+        // -------------------------------------------------------------------
+        // TEXT-TO-SPEECH
+        // -------------------------------------------------------------------
+        window.currentUtterance = null;
+        function speakText(text, langCode) {
+
+            // Android app → use native Android Text-to-Speech
+            if (window.AndroidTTS) {
+
+                const robot = document.getElementById("aiRobot");
+
+                if (robot) {
+                    robot.classList.add("speaking");
+                }
+
+                window.AndroidTTS.speak(text, langCode);
+                return;
+            }
+
+            // Normal browser → use browser Text-to-Speech
+            
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            window.currentUtterance = utterance;
+
+            const bcp47Map = { "es": "es-ES", "en": "en-US", "hi": "hi-IN", "ja": "ja-JP", "zh": "zh-CN" };
+            utterance.lang = bcp47Map[langCode] || langCode;
+            utterance.rate = 1.0;
+
+            const voices = window.speechSynthesis.getVoices();
+            const selectedVoice = voices.find(v => v.lang.toLowerCase().startsWith(langCode.toLowerCase()));
+            if (selectedVoice) utterance.voice = selectedVoice;
+
+            const robot = document.getElementById('aiRobot');
+
+            utterance.onstart = () => { if (robot) robot.classList.add('speaking'); };
+            utterance.onend = () => {
+                if (robot) robot.classList.remove('speaking');
+                appendLog("ttsLogs", "Playback complete.", "info");
+                window.currentUtterance = null;
+            };
+            utterance.onerror = () => {
+                if (robot) robot.classList.remove('speaking');
+                window.currentUtterance = null;
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+        }
+
+        // -------------------------------------------------------------------
+        // SPEECH-TO-TEXT (Push To Talk)
+        // -------------------------------------------------------------------
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+
+        function setupSpeechRecognition() {
+            if (!SpeechRecognition) {
+                alert("Web Speech API is not supported in this browser.");
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            const bcp47Map = { "hi": "hi-IN", "en": "en-US", "es": "es-ES", "ja": "ja-JP", "zh": "zh-CN" };
+            recognition.lang = bcp47Map[sourceLangSelect.value] || sourceLangSelect.value;
+
+            // recognition.onresult = (event) => {
+            //     const lastResultIndex = event.results.length - 1;
+            //     const transcript = event.results[lastResultIndex][0].transcript.trim();
+            //     if (transcript) handleTranscriptionResult(transcript);
+            // };
+            recognition.onresult = (event) => {
+                // Loop through results to ensure we only process the final transcript
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        const transcript = event.results[i][0].transcript.trim();
+                        if (transcript) {
+                            handleTranscriptionResult(transcript);
+                        }
+                    }
+                }
+            };
+            // recognition.onresult = (event) => {
+            //     let bestTranscript = "";
+
+            //     for (let i = 0; i < event.results.length; i++) {
+            //         const transcript = event.results[i][0].transcript.trim();
+
+            //         if (transcript.length > bestTranscript.length) {
+            //             bestTranscript = transcript;
+            //         }
+            //     }
+
+            //     if (bestTranscript) {
+            //         recognition._bestTranscript = bestTranscript;
+            //     }
+            // };
+
+            recognition.onerror = (event) => {
+                console.error("Speech recognition error:", event.error);
+                if (event.error === 'not-allowed') {
+                    stopCapture();
+                    voiceTitle.textContent = "Mic Blocked";
+                    voiceSub.textContent = "Check browser permissions";
+                }
+            };
+        }
+
+        function handleLanguageChange() {
+            const bcp47Map = { "hi": "hi-IN", "en": "en-US", "es": "es-ES", "ja": "ja-JP", "zh": "zh-CN" };
+            if (recognition) {
+                recognition.lang = bcp47Map[sourceLangSelect.value] || sourceLangSelect.value;
+            }
+            triggerModelLoad();
+        }
+
+        sourceLangSelect.addEventListener("change", handleLanguageChange);
+        targetLangSelect.addEventListener("change", handleLanguageChange);
+
+        // -------------------------------------------------------------------
+        // PUSH-TO-TALK MECHANIC
+        // -------------------------------------------------------------------
+        function startCapture() {
+            if (!isModelLoaded) {
+                voiceSub.textContent = "Please wait, models are loading...";
+                return;
+            }
+            if (isHolding) return;
+            isHolding = true;
+
+            if (!recognition) setupSpeechRecognition();
+
+            micOrb.classList.remove("muted");
+            micOrb.classList.add("active");
+            waveform.classList.add("listening");
+            voiceTitle.textContent = "Listening Active";
+            voiceSub.textContent = "Release to translate...";
+            micOrb.innerHTML = `<svg class="mic-icon" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>`;
+
+            try { recognition.start(); } catch (e) { }
+        }
+
+        function stopCapture() {
+            if (!isHolding) return;
+            isHolding = false;
+
+            micOrb.classList.add("muted");
+            micOrb.classList.remove("active");
+            waveform.classList.remove("listening");
+            voiceTitle.textContent = "Microphone Muted";
+            voiceSub.textContent = "Hold the orb to speak";
+            micOrb.innerHTML = `<svg class="mic-icon" viewBox="0 0 24 24"><path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02 3.28l-1.5 1.5C12.95 15.93 12.49 16 12 16c-2.21 0-4-1.79-4-4H6.3c0 2.89 2.11 5.3 4.85 5.82V21h1.7v-3.18c.84-.16 1.62-.5 2.29-.97zM2.1 4.1L.69 5.51l2.43 2.43C3.04 8.79 3 9.38 3 10v1c0 2.76 2.24 5 5 5h3.09l4.4 4.4 1.41-1.41L2.1 4.1zM12 5c1.66 0 3 1.34 3 3v2.17l-6 6V8c0-1.66 1.34-3 3-3z"/></svg>`;
+
+            try { recognition.stop(); } catch (e) { }
+        }
+
+        micOrb.addEventListener('mousedown', startCapture);
+        micOrb.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            startCapture();
+        });
+
+        window.addEventListener('mouseup', stopCapture);
+        window.addEventListener('touchend', stopCapture);
+
+        const clearButton = document.getElementById("clearButton");
+        clearButton.addEventListener("click", () => {
+            chatContainer.innerHTML = '';
+            if (emptyMessage) {
+                chatContainer.appendChild(emptyMessage);
+                emptyMessage.style.display = "block";
+            }
+            activeCard = null;
+            appendLog("transformersLogs", "Chat history cleared from UI.", "info");
+        });
+
+        // -------------------------------------------------------------------
+        // APK DOWNLOAD BANNER LOGIC (FIRST VISIT MOBILE)
+        // -------------------------------------------------------------------
+        window.addEventListener('DOMContentLoaded', () => {
+            const apkBanner = document.getElementById('apkDownloadBanner');
+
+            // Check if this is the user's first visit
+            if (!localStorage.getItem('hasVisitedLiveSpeechApp')) {
+                // Mark that they have visited
+                localStorage.setItem('hasVisitedLiveSpeechApp', 'true');
+
+                // Show the banner inline (CSS media queries will still force it on desktop)
+                if (apkBanner) {
+                    apkBanner.style.display = 'block';
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
